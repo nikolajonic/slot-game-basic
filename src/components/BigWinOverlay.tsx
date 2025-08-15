@@ -3,7 +3,7 @@ import React from "react";
 type Props = {
   amount: number;
   factor: number;
-  /** optional: how long the count-up takes (ms) */
+
   durationMs?: number;
 };
 
@@ -17,23 +17,20 @@ const BigWinOverlay: React.FC<Props> = ({
   const [justFinished, setJustFinished] = React.useState(false);
   const rafRef = React.useRef<number | null>(null);
 
-  // format with two decimals and thousands separators
   const fmt = (n: number) =>
     n.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
 
-  // ease-out (quint) feels slotty
   const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5);
 
   React.useEffect(() => {
-    // cancel any previous animation
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setIsCounting(true);
     setJustFinished(false);
 
-    const from = 0; // start from zero like a win roll-up
+    const from = 0;
     const to = Math.max(0, amount);
     const start = performance.now();
 
@@ -42,7 +39,6 @@ const BigWinOverlay: React.FC<Props> = ({
       const eased = easeOutQuint(t);
       const value = from + (to - from) * eased;
 
-      // snap tiny cents near the end so it feels crisp
       const snapped = t > 0.98 ? to : value;
       setDisplay(snapped);
 
@@ -51,7 +47,7 @@ const BigWinOverlay: React.FC<Props> = ({
       } else {
         setIsCounting(false);
         setJustFinished(true);
-        // small “pop” then settle
+
         setTimeout(() => setJustFinished(false), 220);
       }
     };
@@ -72,7 +68,6 @@ const BigWinOverlay: React.FC<Props> = ({
         <div
           style={{
             ...styles.amount,
-            // gentle scale while counting, a slightly bigger pop when finished
             transform: isCounting
               ? "scale(1.02)"
               : justFinished

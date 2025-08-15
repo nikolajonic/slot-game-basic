@@ -15,7 +15,7 @@ export const TIMING = {
   bonusEntryDrop: 320,
 };
 
-export const BIG_WIN_FACTOR = 10; // 20x bet
+export const BIG_WIN_FACTOR = 5;
 
 export const isMultiplier = (s: SymbolKey) =>
   s === "x2" || s === "x3" || s === "x4" || s === "x5";

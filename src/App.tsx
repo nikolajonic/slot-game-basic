@@ -1,8 +1,6 @@
 import React from "react";
 import PixiStage from "./pixi/PixiStage";
 import { SlotEngine } from "./game/SlotEngine";
-
-/* Components */
 import MusicToggle from "./components/MusicToggle";
 import TopBar from "./components/TopBar";
 import BigWinOverlay from "./components/BigWinOverlay";
@@ -315,7 +313,6 @@ export default class App extends React.Component<{}, AppState> {
   }
 }
 
-/* ---------- 800×600 layout ---------- */
 const styles: Record<string, React.CSSProperties> = {
   root: {
     width: 800,
@@ -325,11 +322,11 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 16,
     boxShadow: "0 10px 30px rgba(0,0,0,.35)",
     display: "grid",
-    gridTemplateRows: "48px 1fr 88px", // bottom row taller for Spin
+    gridTemplateRows: "48px 1fr 88px",
     gridTemplateColumns: "1fr",
     backgroundImage: 'url("/assets/backgrounds/background.jpg")',
     backgroundSize: "cover",
-    backgroundPosition: "center top", // <-- Make sure the image is positioned at the top
+    backgroundPosition: "center top",
     color: "white",
     fontFamily:
       'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial',
@@ -348,7 +345,7 @@ const styles: Record<string, React.CSSProperties> = {
     gridRow: "2 / 3",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center", // centers the grid horizontally
+    justifyContent: "center",
     padding: "8px 12px",
   },
 
@@ -368,7 +365,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 12,
     padding: "0 20px",
     backgroundImage: 'url("/assets/backgrounds/fence.png")',
-    backgroundSize: "cover", // <-- Make the fence image cover the bar
+    backgroundSize: "cover",
     backgroundRepeat: "repeat",
     backgroundPosition: "center",
     fontSize: 16,

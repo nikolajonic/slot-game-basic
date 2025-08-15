@@ -1,7 +1,7 @@
 import React from "react";
 
 type Props = {
-  currentIndex: number; // show as "current out of total"
+  currentIndex: number;
   total: number;
   totalWin: number;
 };
@@ -33,17 +33,17 @@ const styles: Record<string, React.CSSProperties> = {
     top: 16,
     left: "50%",
     transform: "translateX(-50%)",
-    pointerEvents: "none", // so clicks pass through
+    pointerEvents: "none",
   },
   spins: {
-    color: "#facc15", // gold-ish
+    color: "#facc15",
     fontWeight: 700,
   },
   separator: {
     opacity: 0.6,
   },
   total: {
-    color: "#4ade80", // green-ish
+    color: "#4ade80",
     fontWeight: 700,
   },
 };

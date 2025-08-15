@@ -52,18 +52,15 @@ export async function tumbleBase(ctx: BaseCtx): Promise<number> {
       ms(TIMING.pulseDown)
     );
 
-    // remove winners
     for (let r = 0; r < rows; r++)
       for (let c = 0; c < cols; c++) if (winMask[r][c]) grid[r][c] = null;
 
     renderer.renderGrid(grid);
 
-    // fall
     const fromY1 = renderer.getPositionsY();
     const toY1 = buildDropToYFromNulls(grid, rows, cols, renderer.cell);
     await renderer.animateDrop(fromY1, toY1, ms(TIMING.tumbleDrop));
 
-    // refill
     const newMask = compactAndRefill(grid, rows, cols, pickBase);
     renderer.renderGrid(grid);
 
