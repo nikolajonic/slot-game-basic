@@ -47,94 +47,110 @@ export default class PixiStage extends React.Component {
   async componentDidMount() {
     killPrev();
 
-    // 🔒 Layout constants that fit 800×600 app
-    const GRID = { x: 40, y: 24, cell: 80, cols: 6, rows: 5 };
-    const APP_W = GRID.x * 2 + GRID.cols * GRID.cell; // 40*2 + 6*80 = 560
-    const APP_H = GRID.y + GRID.rows * GRID.cell; // 24 + 5*80 = 424
+    const host = this.containerRef.current!;
+    // Use the actual container size (your style below sets 560×424)
+    const APP_W = host.clientWidth || 560;
+    const APP_H = host.clientHeight || 424;
 
-    // Grid area (the reels rectangle we want to frame)
-    const GA_X = GRID.x;
-    const GA_Y = GRID.y;
-    const GA_W = GRID.cols * GRID.cell; // 480
-    const GA_H = GRID.rows * GRID.cell; // 400
+    // Keep your logical grid structure, but derive numbers from container size
+    const COLS = 6;
+    const ROWS = 5;
+
+    // Preserve the same visual ratios you used before:
+    // left/right margin was 40 of 560  →  40/560
+    // top margin was 24 of 424        →  24/424
+    const MARGIN_X_RATIO = 40 / 560;
+    const TOP_MARGIN_RATIO = 24 / 424;
+
+    const marginX = Math.round(APP_W * MARGIN_X_RATIO);
+    const topMargin = Math.round(APP_H * TOP_MARGIN_RATIO);
+
+    const usableW = APP_W - marginX * 2;
+    const usableH = APP_H - topMargin;
+
+    // Cell fits inside both directions
+    const cell = Math.floor(Math.min(usableW / COLS, usableH / ROWS));
+    const GA_W = cell * COLS;
+    const GA_H = cell * ROWS;
+
+    // Center horizontally, keep your original top offset
+    const GRID_X = Math.round((APP_W - GA_W) / 2);
+    const GRID_Y = topMargin;
 
     const app = new PIXI.Application();
     await app.init({
       width: APP_W,
       height: APP_H,
-      backgroundAlpha: 0, // transparent canvas
+      backgroundAlpha: 0,
       antialias: true,
       resolution: Math.min(window.devicePixelRatio || 1, 2),
     });
     this.app = app;
 
-    const host = this.containerRef.current!;
     host.replaceChildren(app.canvas);
     __prevApp = app;
     __prevHost = host;
 
-    // Load textures for symbols
+    // Load symbol textures
     const textures = await loadSymbolTextures();
 
-    // Create the grid
+    // Create the grid from derived values (no fixed pixel constants)
     this.grid = new GridRenderer({
-      x: GRID.x,
-      y: GRID.y,
-      cell: GRID.cell,
-      cols: GRID.cols,
-      rows: GRID.rows,
+      x: GRID_X,
+      y: GRID_Y,
+      cell,
+      cols: COLS,
+      rows: ROWS,
       textures,
     });
 
-    // --- Branch frame (tiled on all 4 sides of the grid area) ---
+    // --- Branch frame (tiled around the grid area) ---
     const branchTex = await PIXI.Assets.load("/assets/backgrounds/branch.png");
-    // Allow repeating; helpful for seamless tiling
     branchTex.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 
-    // Frame thickness (px). Tune to your art (e.g., 18–28).
-    const FRAME_THICKNESS = Math.min(branchTex.height || 24, 24);
+    // Frame thickness relative to a cell (≈ previous 24px @ cell=80 → 0.3)
+    const FRAME_THICKNESS = Math.max(12, Math.min(32, Math.round(cell * 0.3)));
     const tileScale = FRAME_THICKNESS / (branchTex.height || FRAME_THICKNESS);
 
-    // TOP edge: tiles left→right above the grid
+    // TOP
     const topEdge = new PIXI.TilingSprite(branchTex, GA_W, FRAME_THICKNESS);
-    topEdge.x = GA_X;
-    topEdge.y = GA_Y - FRAME_THICKNESS;
+    topEdge.x = GRID_X;
+    topEdge.y = GRID_Y - FRAME_THICKNESS;
     topEdge.tileScale.set(tileScale, tileScale);
 
-    // BOTTOM edge: tiles left→right below the grid
+    // BOTTOM
     const bottomEdge = new PIXI.TilingSprite(branchTex, GA_W, FRAME_THICKNESS);
-    bottomEdge.x = GA_X;
-    bottomEdge.y = GA_Y + GA_H;
+    bottomEdge.x = GRID_X;
+    bottomEdge.y = GRID_Y + GA_H;
     bottomEdge.tileScale.set(tileScale, tileScale);
-    // Optional mirror for visual symmetry:
+    // Optional mirror:
     // bottomEdge.tileScale.x *= -1; bottomEdge.tilePosition.x = -GA_W;
 
-    // LEFT edge: tile along vertical side (rotate -90°)
+    // LEFT (rotate -90°)
     const leftEdge = new PIXI.TilingSprite(branchTex, GA_H, FRAME_THICKNESS);
     leftEdge.rotation = -Math.PI / 2;
-    // After rotation around (0,0), position using bottom-left math:
-    leftEdge.x = GA_X - FRAME_THICKNESS;
-    leftEdge.y = GA_Y + GA_H;
+    leftEdge.x = GRID_X - FRAME_THICKNESS;
+    leftEdge.y = GRID_Y + GA_H;
     leftEdge.tileScale.set(tileScale, tileScale);
 
-    // RIGHT edge: tile along vertical side (rotate -90°)
+    // RIGHT (rotate -90°)
     const rightEdge = new PIXI.TilingSprite(branchTex, GA_H, FRAME_THICKNESS);
     rightEdge.rotation = -Math.PI / 2;
-    rightEdge.x = GA_X + GA_W;
-    rightEdge.y = GA_Y + GA_H;
+    rightEdge.x = GRID_X + GA_W;
+    rightEdge.y = GRID_Y + GA_H;
     rightEdge.tileScale.set(tileScale, tileScale);
     // Optional mirror:
     // rightEdge.tileScale.x *= -1; rightEdge.tilePosition.x = -GA_H;
 
-    // Add frame BEHIND the grid
+    // Add behind grid
     app.stage.addChild(topEdge, bottomEdge, leftEdge, rightEdge);
     app.stage.addChild(this.grid);
 
-    // Snap baseline positions
+    // Baseline
     this.grid.resetCellPositions();
     this.grid.setPositionsY(this.grid.baseYMatrix());
 
-    // Ready -> parent
+    // Ready callbacks
     this.resolveReady({ app, grid: this.grid });
     const cbs = this.readyCbs.slice();
     this.readyCbs.length = 0;
@@ -158,12 +174,14 @@ export default class PixiStage extends React.Component {
   }
 
   render() {
+    // You said it's OK to keep fixed style here; this defines the container box.
+    // Internals now derive from the container size instead of hard-coded numbers.
     return (
       <div
         ref={this.containerRef}
         style={{
-          width: 560, // match APP_W
-          height: 424, // match APP_H
+          width: 560,
+          height: 424,
           overflow: "hidden",
         }}
       />

@@ -15,7 +15,7 @@ type GridRendererOpts = {
 export class GridRenderer extends PIXI.Container {
   readonly cols: number;
   readonly rows: number;
-  readonly cell: number;
+  cell: number; // <- allow updates
 
   private bg: PIXI.Graphics;
   private cells: CellView[][] = [];
@@ -37,17 +37,25 @@ export class GridRenderer extends PIXI.Container {
     this.initCells();
   }
 
+  /** Proportional background (no fixed px) */
   private drawBackground() {
     const w = this.cols * this.cell;
     const h = this.rows * this.cell;
 
+    // proportions derived from your original 80px cell:
+    // outer radius ~24px -> 24/80 = 0.30, inner radius ~12px -> 0.15
+    const outerRadius = Math.round(this.cell * 0.3);
+    const innerRadius = Math.round(this.cell * 0.15);
+    const strokeW = Math.max(1, Math.round(this.cell * 0.025));
+
     this.bg.clear();
-    this.bg.beginFill("transparent");
-    this.bg.drawRoundedRect(0, 0, w, h, 12);
+    // transparent fill
+    this.bg.beginFill(0x000000, 0);
+    this.bg.drawRoundedRect(0, 0, w, h, innerRadius);
     this.bg.endFill();
 
-    this.bg.lineStyle(2, 0x1b2640);
-    this.bg.drawRoundedRect(0, 0, w, h, 24);
+    this.bg.lineStyle(strokeW, 0x1b2640, 1);
+    this.bg.drawRoundedRect(0, 0, w, h, outerRadius);
   }
 
   private initCells() {
@@ -58,6 +66,21 @@ export class GridRenderer extends PIXI.Container {
         view.position.set(c * this.cell, r * this.cell);
         this.addChild(view);
         this.cells[r][c] = view;
+      }
+    }
+  }
+
+  /** Call this if layout (x,y,cell) changes; keeps everything proportional */
+  resizeLayout({ x, y, cell }: { x: number; y: number; cell: number }) {
+    this.x = x;
+    this.y = y;
+    this.cell = cell;
+    this.drawBackground();
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        const view = this.cells[r][c];
+        view.setSize(this.cell);
+        view.position.set(c * this.cell, r * this.cell);
       }
     }
   }
