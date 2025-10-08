@@ -23,7 +23,7 @@ const BonusSummaryModal: React.FC<Props> = ({ total, onClose }) => {
     </div>
   );
 };
-
+const isMobile = window.innerWidth < 768;
 const styles: Record<string, React.CSSProperties> = {
   backdrop: {
     position: "absolute",
@@ -36,8 +36,8 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   modal: {
-    width: 420,
-    height: 360,
+    width: isMobile ? 320 : 420,
+    height: isMobile ? 280 : 360,
     borderRadius: 18,
     overflow: "hidden",
     backgroundImage:

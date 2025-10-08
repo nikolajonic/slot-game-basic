@@ -359,11 +359,9 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   topBarRow: {
-    gridRow: "1 / 2",
     display: "flex",
     alignItems: "center",
     gap: 10,
-    padding: "0 12px",
   },
 
   centerRow: {

@@ -24,6 +24,9 @@ const styles: Record<string, React.CSSProperties> = {
   wrap: {
     alignItems: "center",
     gap: 8,
+    justifyContent: "center",
+    display: "flex",
+    width: isMobile ? 260 : 440,
     fontWeight: 500,
     color: "#fff",
     textShadow: "0 1px 3px rgba(0,0,0,0.6)",
