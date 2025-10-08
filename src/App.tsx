@@ -341,11 +341,12 @@ export default class App extends React.Component<{}, AppState> {
   }
 }
 const isMobile = window.innerWidth < 768;
+const inIframe = window.self !== window.top;
 // ---- STYLES ----
 const styles: Record<string, React.CSSProperties> = {
   root: {
-    width: "100vw",
-    height: isMobile ? "50vh" : "100vh",
+    width: inIframe ? "100%" : "100vw",
+    height: inIframe ? "100%" : isMobile ? "50vh" : "100vh",
     position: "relative",
     overflow: "hidden",
     display: "grid",
