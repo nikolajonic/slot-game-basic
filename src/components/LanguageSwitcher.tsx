@@ -5,17 +5,17 @@ const languages = [
   {
     code: "en",
     label: "English",
-    flag: "/basic-slot-game/assets/languages/united-kingdom.png",
+    flag: "/slot-game-basic/assets/languages/united-kingdom.png",
   },
   {
     code: "sr",
     label: "Serbian",
-    flag: "/basic-slot-game/assets/languages/serbia.png",
+    flag: "/slot-game-basic/assets/languages/serbia.png",
   },
   {
     code: "it",
     label: "Italian",
-    flag: "/basic-slot-game/assets/languages/italy.png",
+    flag: "/slot-game-basic/assets/languages/italy.png",
   },
 ];
 

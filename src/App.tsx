@@ -192,7 +192,7 @@ export default class App extends React.Component<{}, AppState> {
     }
 
     const audio = new Audio(
-      `${import.meta.env.BASE_URL}assets/music/background-music-loop.mp3`
+      `/slot-game-basic/assets/music/background-music-loop.mp3`
     );
 
     audio.loop = true;
@@ -392,7 +392,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
     gridTemplateColumns: "1fr 1fr 1fr 180px",
     alignItems: "center",
-    backgroundImage: 'url("/basic-slot-game/assets/backgrounds/fence.png")',
+    backgroundImage: 'url("assets/backgrounds/fence.png")',
     backgroundSize: "cover",
     backgroundRepeat: "repeat",
     backgroundPosition: "center",

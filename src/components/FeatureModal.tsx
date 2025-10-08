@@ -45,7 +45,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 18,
     overflow: "hidden",
     backgroundImage:
-      'url("/basic-slot-game/assets/backgrounds/feature-game-start-background.png")',
+      'url("assets/backgrounds/feature-game-start-background.png")',
     backgroundSize: "contain",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",

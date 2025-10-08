@@ -97,7 +97,7 @@ export default class PixiStage extends React.Component {
     });
 
     const branchTex = await PIXI.Assets.load(
-      "/basic-slot-game/assets/backgrounds/branch.png"
+      "/slot-game-basic/assets/backgrounds/branch.png"
     );
     branchTex.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 

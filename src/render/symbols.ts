@@ -4,18 +4,18 @@ import type { SymbolKey } from "../game/types";
 const BASE = import.meta.env.BASE_URL || "/";
 
 export const SYMBOL_URLS: Record<SymbolKey, string> = {
-  apple: `${BASE}basic-slot-game/assets/symbols/apple.png`,
-  banana: `${BASE}basic-slot-game/assets/symbols/banana.png`,
-  grapes: `${BASE}basic-slot-game/assets/symbols/grapes.png`,
-  lemon: `${BASE}basic-slot-game/assets/symbols/lemon.png`,
-  orange: `${BASE}basic-slot-game/assets/symbols/orange.png`,
-  peach: `${BASE}basic-slot-game/assets/symbols/peach.png`,
-  watermelon: `${BASE}basic-slot-game/assets/symbols/watermelon.png`,
-  scatter: `${BASE}basic-slot-game/assets/symbols/scatter.png`,
-  x2: `${BASE}basic-slot-game/assets/symbols/multipliers/2x.png`,
-  x3: `${BASE}basic-slot-game/assets/symbols/multipliers/3x.png`,
-  x4: `${BASE}basic-slot-game/assets/symbols/multipliers/4x.png`,
-  x5: `${BASE}basic-slot-game/assets/symbols/multipliers/5x.png`,
+  apple: `${BASE}assets/symbols/apple.png`,
+  banana: `${BASE}assets/symbols/banana.png`,
+  grapes: `${BASE}assets/symbols/grapes.png`,
+  lemon: `${BASE}assets/symbols/lemon.png`,
+  orange: `${BASE}assets/symbols/orange.png`,
+  peach: `${BASE}assets/symbols/peach.png`,
+  watermelon: `${BASE}assets/symbols/watermelon.png`,
+  scatter: `${BASE}assets/symbols/scatter.png`,
+  x2: `${BASE}assets/symbols/multipliers/2x.png`,
+  x3: `${BASE}assets/symbols/multipliers/3x.png`,
+  x4: `${BASE}assets/symbols/multipliers/4x.png`,
+  x5: `${BASE}assets/symbols/multipliers/5x.png`,
 };
 
 export async function loadSymbolTextures(): Promise<
