@@ -347,8 +347,7 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: "hidden",
     display: "grid",
     gridTemplateRows: "48px 1fr 88px",
-    backgroundImage:
-      'url("/basic-slot-game/assets/backgrounds/background.jpg")',
+    backgroundImage: 'url("assets/backgrounds/background.jpg")',
     backgroundSize: "cover",
     backgroundPosition: "center top",
     color: "white",
