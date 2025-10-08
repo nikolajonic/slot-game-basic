@@ -96,7 +96,9 @@ export default class PixiStage extends React.Component {
       textures,
     });
 
-    const branchTex = await PIXI.Assets.load("/assets/backgrounds/branch.png");
+    const branchTex = await PIXI.Assets.load(
+      "/basic-slot-game/assets/backgrounds/branch.png"
+    );
     branchTex.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 
     const FRAME_THICKNESS = Math.max(12, Math.min(32, Math.round(cell * 0.3)));

@@ -191,7 +191,7 @@ export default class App extends React.Component<{}, AppState> {
       return;
     }
 
-    const audio = new Audio("/assets/music/background-music-loop.mp3");
+    const audio = new Audio("assets/music/background-music-loop.mp3");
     audio.loop = true;
     audio.preload = "auto";
     audio.volume = 0.5;
@@ -347,7 +347,8 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: "hidden",
     display: "grid",
     gridTemplateRows: "48px 1fr 88px",
-    backgroundImage: 'url("/assets/backgrounds/background.jpg")',
+    backgroundImage:
+      'url("/basic-slot-game/assets/backgrounds/background.jpg")',
     backgroundSize: "cover",
     backgroundPosition: "center top",
     color: "white",
@@ -389,7 +390,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
     gridTemplateColumns: "1fr 1fr 1fr 180px",
     alignItems: "center",
-    backgroundImage: 'url("/assets/backgrounds/fence.png")',
+    backgroundImage: 'url("/basic-slot-game/assets/backgrounds/fence.png")',
     backgroundSize: "cover",
     backgroundRepeat: "repeat",
     backgroundPosition: "center",
