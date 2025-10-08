@@ -191,7 +191,10 @@ export default class App extends React.Component<{}, AppState> {
       return;
     }
 
-    const audio = new Audio("assets/music/background-music-loop.mp3");
+    const audio = new Audio(
+      `${import.meta.env.BASE_URL}assets/music/background-music-loop.mp3`
+    );
+
     audio.loop = true;
     audio.preload = "auto";
     audio.volume = 0.5;
