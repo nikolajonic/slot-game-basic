@@ -7,7 +7,7 @@ import BigWinOverlay from "./components/BigWinOverlay";
 import BonusSummaryModal from "./components/BonusSummaryModal";
 import FeatureModal from "./components/FeatureModal";
 import SpinButton from "./components/SpinButton";
-// import LanguageSwitcher from "./components/LanguageSwitcher"; // optional if you want it back
+// import LanguageSwitcher from "./components/LanguageSwitcher";
 
 type AppState = {
   spinning: boolean;
@@ -35,6 +35,15 @@ export default class App extends React.Component<{}, AppState> {
   private stageRef = React.createRef<PixiStage>();
   private engine: SlotEngine | null = null;
 
+  // global shared music instance
+  private static globalMusic: HTMLAudioElement | null = null;
+  private music: HTMLAudioElement | null = null;
+  private boundUnlock = () => {
+    this.tryPlayMusic();
+    window.removeEventListener("pointerdown", this.boundUnlock);
+    window.removeEventListener("keydown", this.boundUnlock);
+  };
+
   state: AppState = {
     spinning: false,
     balance: 1000,
@@ -52,14 +61,6 @@ export default class App extends React.Component<{}, AppState> {
 
     musicOn: true,
     musicReady: false,
-  };
-
-  // ---- Audio fields ----
-  private music: HTMLAudioElement | null = null;
-  private boundUnlock = () => {
-    this.tryPlayMusic();
-    window.removeEventListener("pointerdown", this.boundUnlock);
-    window.removeEventListener("keydown", this.boundUnlock);
   };
 
   async componentDidMount(): Promise<void> {
@@ -83,7 +84,7 @@ export default class App extends React.Component<{}, AppState> {
       },
     });
 
-    // events
+    // ---- ENGINE EVENTS ----
     this.engine.on("spinStart", () => {
       this.setState((s) => {
         const inBonus = s.freeSpinsLeft > 0 || !!this.engine?.isInBonus();
@@ -91,7 +92,6 @@ export default class App extends React.Component<{}, AppState> {
           spinning: true,
           lastWin: 0,
           totalSpinWin: 0,
-          // deduct bet only in base game
           balance: inBonus ? s.balance : s.balance - s.bet,
         };
       });
@@ -158,10 +158,18 @@ export default class App extends React.Component<{}, AppState> {
       setTimeout(clear, 3000);
     });
 
-    // music + seed
+    // ---- MUSIC ----
     this.setupMusic();
     this.engine.seed();
     this.tryPlayMusic();
+
+    // optional: clean music on full page unload
+    window.addEventListener("beforeunload", () => {
+      if (App.globalMusic) {
+        App.globalMusic.pause();
+        App.globalMusic = null;
+      }
+    });
   }
 
   componentWillUnmount(): void {
@@ -170,11 +178,19 @@ export default class App extends React.Component<{}, AppState> {
     try {
       this.music?.pause();
     } catch {}
+    // keep globalMusic alive so it doesn’t restart next mount
     this.music = null;
   }
 
-  // ---- Audio helpers ----
+  // ---- AUDIO HELPERS ----
   private setupMusic = () => {
+    // reuse global audio if already created
+    if (App.globalMusic) {
+      this.music = App.globalMusic;
+      this.music.muted = !this.state.musicOn;
+      return;
+    }
+
     const audio = new Audio("/assets/music/background-music-loop.mp3");
     audio.loop = true;
     audio.preload = "auto";
@@ -185,7 +201,9 @@ export default class App extends React.Component<{}, AppState> {
       () => this.setState({ musicReady: true }),
       { once: true }
     );
+
     this.music = audio;
+    App.globalMusic = audio;
 
     window.addEventListener("pointerdown", this.boundUnlock);
     window.addEventListener("keydown", this.boundUnlock);
@@ -204,28 +222,28 @@ export default class App extends React.Component<{}, AppState> {
       if (!this.music) return;
       this.music.muted = !on;
       if (on) this.tryPlayMusic();
+      else this.music.pause();
     });
   };
 
-  // ---- Game UI handlers ----
+  // ---- GAME HANDLERS ----
   private handleSpin = () => {
     if (!this.engine || this.state.spinning) return;
 
     const inBonus = !!this.engine.isInBonus();
-    if (!inBonus && this.state.balance < this.state.bet) {
-      // optionally show a toast/overlay here
-      return;
-    }
+    if (!inBonus && this.state.balance < this.state.bet) return;
 
     if (inBonus) this.engine.spinBonusOnce();
     else this.engine.spin();
   };
 
   private startBonus = () => {
-    this.setState({ showBonusPopup: false }, () => this.engine?.startBonus(6));
+    this.setState({ showBonusPopup: false }, () => this.engine?.startBonus(10));
   };
 
   private closeBonusSummary = () => this.setState({ bonusSummary: null });
+
+  isMobile = window.innerWidth < 768;
 
   render() {
     const {
@@ -252,10 +270,9 @@ export default class App extends React.Component<{}, AppState> {
         {/* Top row (tools) */}
         <div style={styles.topBarRow}>
           <MusicToggle on={musicOn} onToggle={this.toggleMusic} />
-          {/* <LanguageSwitcher /> */}
         </div>
 
-        {/* Center row: grid centered */}
+        {/* Center row: PIXI stage */}
         <div style={styles.centerRow}>
           <div style={styles.stageFrameWrap}>
             {inBonus && (
@@ -272,6 +289,8 @@ export default class App extends React.Component<{}, AppState> {
             </div>
           </div>
         </div>
+
+        {/* Bottom bar */}
         <div style={styles.bottomBar}>
           <div style={styles.bottomBarElement}>
             Balance: <b>{fmt(balance)}</b>
@@ -282,7 +301,13 @@ export default class App extends React.Component<{}, AppState> {
           <div style={styles.bottomBarElement}>
             Win: <b>{fmt(lastWin)}</b>
           </div>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: this.isMobile ? "center" : "flex-end",
+              paddingRight: 12,
+            }}
+          >
             <SpinButton
               disabled={spinning}
               label={"SPIN"}
@@ -312,18 +337,16 @@ export default class App extends React.Component<{}, AppState> {
     );
   }
 }
-
+const isMobile = window.innerWidth < 768;
+// ---- STYLES ----
 const styles: Record<string, React.CSSProperties> = {
   root: {
-    width: 800,
-    height: 600,
+    width: "100vw",
+    height: isMobile ? "50vh" : "100vh",
     position: "relative",
     overflow: "hidden",
-    borderRadius: 16,
-    boxShadow: "0 10px 30px rgba(0,0,0,.35)",
     display: "grid",
     gridTemplateRows: "48px 1fr 88px",
-    gridTemplateColumns: "1fr",
     backgroundImage: 'url("/assets/backgrounds/background.jpg")',
     backgroundSize: "cover",
     backgroundPosition: "center top",
@@ -334,7 +357,6 @@ const styles: Record<string, React.CSSProperties> = {
 
   topBarRow: {
     gridRow: "1 / 2",
-    position: "relative",
     display: "flex",
     alignItems: "center",
     gap: 10,
@@ -346,24 +368,27 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "8px 12px",
+    padding: "8px 0px",
+  },
+
+  stageFrameWrap: {
+    position: "relative",
+    width: "80%",
+    height: "100%",
   },
 
   stageFrame: {
-    width: 560,
-    height: 456,
+    width: "100%",
+    height: "100%",
     borderRadius: 12,
     overflow: "hidden",
     background: "transparent",
   },
 
   bottomBar: {
-    gridRow: "3 / 4",
     display: "grid",
     gridTemplateColumns: "1fr 1fr 1fr 180px",
     alignItems: "center",
-    gap: 12,
-    padding: "0 20px",
     backgroundImage: 'url("/assets/backgrounds/fence.png")',
     backgroundSize: "cover",
     backgroundRepeat: "repeat",

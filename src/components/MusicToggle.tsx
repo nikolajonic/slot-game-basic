@@ -15,7 +15,7 @@ const MusicToggle: React.FC<Props> = ({ on, onToggle }) => {
         style={styles.btn}
       >
         {on ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" style={styles.svg}>
+          <svg width="22" height="22" viewBox="0 0 24 24" style={styles.svg}>
             <path d="M4 10v4h3l5 4V6l-5 4H4z" fill="currentColor" />
             <path
               d="M16 8a4 4 0 010 8"
@@ -26,7 +26,7 @@ const MusicToggle: React.FC<Props> = ({ on, onToggle }) => {
             />
           </svg>
         ) : (
-          <svg width="18" height="18" viewBox="0 0 24 24" style={styles.svg}>
+          <svg width="22" height="22" viewBox="0 0 24 24" style={styles.svg}>
             <path d="M4 10v4h3l5 4V6l-5 4H4z" fill="currentColor" />
             <path
               d="M19 5L5 19"
@@ -44,8 +44,8 @@ const MusicToggle: React.FC<Props> = ({ on, onToggle }) => {
 const styles: Record<string, React.CSSProperties> = {
   wrap: { position: "absolute", top: 8, right: 8, zIndex: 60 },
   btn: {
-    width: 36,
-    height: 36,
+    width: 50,
+    height: 50,
     padding: 0,
     lineHeight: 0,
     boxSizing: "border-box",

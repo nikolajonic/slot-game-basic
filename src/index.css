@@ -66,3 +66,31 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.bottom-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 180px; /* desktop */
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+}
+
+@media (max-width: 768px) {
+  .bottom-bar {
+    grid-template-columns: 1fr 1fr; /* mobile 2x2 grid */
+    grid-template-rows: auto auto;
+    gap: 8px;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .bottom-bar > div {
+    text-align: center;
+  }
+
+  .bottom-bar button {
+    width: 100%; /* Spin button full width on mobile */
+    font-size: 18px;
+    padding: 12px 0;
+  }
+}

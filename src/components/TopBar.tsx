@@ -19,18 +19,16 @@ const TopBar: React.FC<Props> = ({ currentIndex, total, totalWin }) => {
     </div>
   );
 };
-
+const isMobile = window.innerWidth < 768;
 const styles: Record<string, React.CSSProperties> = {
   wrap: {
-    display: "flex",
     alignItems: "center",
     gap: 8,
-    fontSize: 18,
     fontWeight: 500,
     color: "#fff",
     textShadow: "0 1px 3px rgba(0,0,0,0.6)",
     position: "absolute",
-    top: 16,
+    top: -30,
     left: "50%",
     transform: "translateX(-50%)",
     pointerEvents: "none",
@@ -38,13 +36,16 @@ const styles: Record<string, React.CSSProperties> = {
   spins: {
     color: "#facc15",
     fontWeight: 700,
+    fontSize: isMobile ? 12 : 26,
   },
   separator: {
     opacity: 0.6,
+    margin: 5,
   },
   total: {
     color: "#4ade80",
     fontWeight: 700,
+    fontSize: isMobile ? 12 : 26,
   },
 };
 

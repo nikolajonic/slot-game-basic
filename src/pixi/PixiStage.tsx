@@ -153,13 +153,13 @@ export default class PixiStage extends React.Component {
   }
 
   render() {
+    const isMobile = window.innerWidth < 768;
     return (
       <div
         ref={this.containerRef}
         style={{
-          width: 560,
-          height: 424,
-          overflow: "hidden",
+          width: isMobile ? "50%" : "100%",
+          height: isMobile ? "45%" : "100%",
         }}
       />
     );

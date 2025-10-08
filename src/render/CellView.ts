@@ -71,6 +71,12 @@ export class CellView extends PIXI.Container {
     this.g.drawRoundedRect(pad, pad, size - pad * 2, size - pad * 2, radius);
   }
 
+  refitTexture() {
+    if (this.sprite.texture && this.sprite.texture !== PIXI.Texture.EMPTY) {
+      this["_fitTexture"](this.sprite.texture);
+    }
+  }
+
   drawEmpty(_size: number) {
     this.g.clear();
     this.sprite.visible = false;
